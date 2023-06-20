@@ -2,8 +2,13 @@ package com.example.mudrassahapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class DBHandler extends SQLiteOpenHelper {
 
@@ -91,5 +96,21 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
 
     }
+
+    private String getCurrentDate(){
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
+
+    public Cursor getStudentAndTaskRecords(String Rollno){
+        SQLiteDatabase db=this.getReadableDatabase();
+        String query="SELECT * FROM "+ TABLE_STUDENT + " INNER JOIN "+ TABLE_TASK_RECORDS+
+                " ON "+ TABLE_STUDENT + "." + COLUMN_ROLLNO + " = "+ TABLE_TASK_RECORDS+ "."+ COLUMN_ROLLNO
+                + " WHERE "+ TABLE_STUDENT+"."+COLUMN_ROLLNO+" = ?";
+        String [] selected={Rollno};
+        return db.rawQuery(query,selected);
+    }
+
 
 }
