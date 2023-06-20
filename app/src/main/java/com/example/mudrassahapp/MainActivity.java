@@ -25,4 +25,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    public void ClickDailyTask(View v){
+        Intent intent=new Intent(MainActivity.this, DailyTask.class);
+        startActivity(intent);
+    }
+
+    public void ClickSearch(View v){
+        Intent intent=new Intent(MainActivity.this, Search.class);
+        startActivity(intent);
+    }
 }

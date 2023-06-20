@@ -8,21 +8,23 @@
 
     <EditText
         android:id="@+id/RollNo2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
+        android:layout_width="270dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="120dp"
+        android:background="@drawable/edittext_style"
         android:ems="10"
         android:hint="RollNo"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.537"
+        app:layout_constraintHorizontal_bias="0.546"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/Sabaq"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="270dp"
+        android:layout_height="50dp"
+        android:background="@drawable/edittext_style"
         android:layout_marginTop="36dp"
         android:ems="10"
         android:hint="Sabaq"
@@ -34,8 +36,9 @@
 
     <EditText
         android:id="@+id/Sabaqi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="270dp"
+        android:layout_height="50dp"
+        android:background="@drawable/edittext_style"
         android:layout_marginTop="36dp"
         android:ems="10"
         android:hint="Sabaqi"
@@ -47,8 +50,9 @@
 
     <EditText
         android:id="@+id/Manzil"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="270dp"
+        android:layout_height="50dp"
+        android:background="@drawable/edittext_style"
         android:layout_marginTop="28dp"
         android:ems="10"
         android:hint="Manzil"
@@ -60,13 +64,27 @@
 
     <Button
         android:id="@+id/button5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
         android:layout_marginTop="52dp"
         android:text="Button"
+        android:backgroundTint="#FF5722"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.531"
+        app:layout_constraintHorizontal_bias="0.54"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Manzil" />
+
+    <TextView
+        android:id="@+id/dailyTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:text="Daily Task"
+        android:textStyle="bold"
+        android:textColor="#FF5722"
+        android:textSize="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
