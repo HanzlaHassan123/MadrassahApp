@@ -13,16 +13,13 @@
         android:theme="@style/Theme.MudrassahApp"
         tools:targetApi="31">
         <activity
-            android:name=".SearchResult"
+            android:name=".SabaqActivity"
             android:exported="false" />
         <activity
-            android:name=".Search"
+            android:name=".AddTasks"
             android:exported="false" />
         <activity
-            android:name=".DailyTask"
-            android:exported="false" />
-        <activity
-            android:name=".StudentDetails"
+            android:name=".AddStudent"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

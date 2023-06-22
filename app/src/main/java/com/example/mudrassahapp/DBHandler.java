@@ -5,111 +5,133 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+
+
 
 public class DBHandler extends SQLiteOpenHelper {
 
-    private static final String DataBaseName="madrassh.db";
-    private  static final  String TABLE_STUDENT="students";
-    private static final String TABLE_TASK_RECORDS="taskrecord";
+    private final Context context;
+    private static final String DBName="Mydb";
+    private static final int DBVersion=1;
+    private static final String Table_Name="My_Table";
 
-    private static final String COLUMN_ROLLNO="rollNo";
-
-    // student records
-
-    private static final String COLUMN_NAME="name";
-    private static final String COLUMN_AGE="age";
-    private static final String COLUMN_CLASS="class";
-
-// task records
-    private static final String COLUMN_SABAQ="sabaq";
-    private static final String COLUMN_SABAQI="sabaqi";
-    private static final String COLUMN_MANZIL="manzil";
-    private static final String COLUMN_DATE="date";
+    private static final String RollNum="std_roll";
+    private static final String Name="std_name";
+    private static final String Age="std_age";
+    private static final String StdClass="std_class";
 
 
-    private static final String CREATE_STUDENT_TABLE = "CREATE TABLE " + TABLE_STUDENT + "("
-            + COLUMN_ROLLNO + " TEXT Primary Key, "
-            + COLUMN_NAME + " TEXT, "
-            + COLUMN_AGE + " TEXT, "
-            + COLUMN_CLASS + " TEXT"
-            + ")";
 
 
-    private static final String CREATE_TASK_RECORDS_TABLE = "CREATE TABLE " + TABLE_TASK_RECORDS + "("
-            + COLUMN_ROLLNO + " TEXT Primary Key, "
-            + COLUMN_SABAQ + " TEXT, "
-            + COLUMN_SABAQI + " TEXT, "
-            + COLUMN_MANZIL + " TEXT, "
-            + COLUMN_DATE + " TEXT, "
-            + "FOREIGN KEY(" + COLUMN_ROLLNO + ") REFERENCES " + TABLE_STUDENT + "(" + COLUMN_ROLLNO + ")"
-            + ")";
+    private static final String Table_Name_Tasks="My_Table_task";
+    private static final String Sabaq = "sabaq";
+    private static final String Sabaqi = "sabaqi";
+    private static final String Manzil = "manzil";
+    private static final String RollNumFK = "rollno_fk";
 
 
+    public DBHandler(@Nullable Context context) {
+        super(context, DBName, null, DBVersion);
+        this.context = context;
+    }
 
 
     @Override
-    public void onCreate(SQLiteDatabase DB) {
-        //CREATE TABLE
-        DB.execSQL(CREATE_STUDENT_TABLE);
-        DB.execSQL(CREATE_TASK_RECORDS_TABLE);
+    public void onCreate(@NonNull SQLiteDatabase db) {
+        String query="CREATE TABLE "+ Table_Name +
+                "(" + RollNum + " TEXT PRIMARY KEY, "+
+                Name + " TEXT, " +
+                Age + " TEXT, " +
+                StdClass + " TEXT);";
+        db.execSQL(query);
+
+        String tasksTableQuery = "CREATE TABLE " + Table_Name_Tasks +
+                "(" + RollNum + " TEXT, " +
+                Sabaq + " TEXT, " +
+                Sabaqi + " TEXT, " +
+                Manzil + " TEXT, " +
+                "FOREIGN KEY(" + RollNum + ") REFERENCES " + Table_Name + "(" + RollNum + "));";
+        db.execSQL(tasksTableQuery);
+
+
 
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase DB, int olderversion, int newversion) {
-    DB.execSQL("DROP TABLE IF EXISTS "+ TABLE_TASK_RECORDS);
-        DB.execSQL("DROP TABLE IF EXISTS "+ TABLE_STUDENT);
-  // CREATE TABLE
-        onCreate(DB);
-    }
-    public DBHandler(Context context){
-        super(context,DataBaseName,null,1);
+    public void onUpgrade(@NonNull SQLiteDatabase db, int i, int i1) {
+        String query="DROP TABLE IF EXISTS "+ Table_Name;
+        db.execSQL(query);
+        onCreate(db);
 
     }
 
-    public void addStudent(Student student){
-        SQLiteDatabase db=this.getWritableDatabase();
-        ContentValues values= new ContentValues();
-        values.put(COLUMN_ROLLNO,student.getRollNo());
-        values.put(COLUMN_NAME,student.getName());
-        values.put(COLUMN_AGE,student.getAge());
-        values.put(COLUMN_CLASS,student.getClassName());
-        // creating table of student and then adding values of each column
-        db.insert(TABLE_STUDENT,null,values);
+    public void AddStudents(String rollnum, String name, String age, String cls) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(RollNum, rollnum);
+        cv.put(Name, name);
+        cv.put(Age, age);
+        cv.put(StdClass, cls);
+
+        long result = db.insert(Table_Name, null, cv);
+
+        if (result == -1) {
+            if (context != null) {
+                Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            if (context != null) {
+                Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
+            }
+        }
+        db.close();
+    }
+
+
+    public void AddTask(String rollNum,String sabaq,String sabaqi,String manzil){
+        SQLiteDatabase db= this.getWritableDatabase();//so we can add the values in the data
+        ContentValues cv=new ContentValues();
+        cv.put(RollNumFK,rollNum);
+        cv.put(Sabaq,sabaq);
+        cv.put(Sabaqi,sabaqi);
+        cv.put(Manzil,manzil);
+
+        long task_result=db.insert(Table_Name_Tasks,null,cv);
+
+        if(task_result==-1){
+            Toast.makeText(context,"Failed",Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(context,"Success",Toast.LENGTH_SHORT).show();
+        }
         db.close();
 
     }
 
-    public void addTaskRecords(TaskRecords records){
-        SQLiteDatabase db=this.getWritableDatabase();
-        ContentValues values= new ContentValues();
-        values.put(COLUMN_ROLLNO,records.getRollNo());
-        values.put(COLUMN_SABAQ,records.getSabaq());
-        values.put(COLUMN_SABAQI,records.getSabaqi());
-        values.put(COLUMN_MANZIL,records.getManzil());
 
-        db.insert(TABLE_TASK_RECORDS,null,values);
-        db.close();
-
-    }
-
-    private String getCurrentDate(){
-        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        Date date = new Date();
-        return dateFormat.format(date);
-    }
-
-    public Cursor getStudentAndTaskRecords(String Rollno){
+    public Cursor readAllData(){
+        String query="SELECT * FROM " + Table_Name;
         SQLiteDatabase db=this.getReadableDatabase();
-        String query="SELECT * FROM "+ TABLE_STUDENT + " INNER JOIN "+ TABLE_TASK_RECORDS+
-                " ON "+ TABLE_STUDENT + "." + COLUMN_ROLLNO + " = "+ TABLE_TASK_RECORDS+ "."+ COLUMN_ROLLNO
-                + " WHERE "+ TABLE_STUDENT+"."+COLUMN_ROLLNO+" = ?";
-        String [] selected={Rollno};
-        return db.rawQuery(query,selected);
+
+        Cursor cursor = null;
+        if(db!=null) cursor = db.rawQuery(query, null);
+        return cursor;
+    }
+
+
+    public Cursor getDataByRollNum(String rollNum) {
+        String query = "SELECT * FROM " + Table_Name_Tasks + " WHERE " + RollNumFK + " = '" + rollNum + "'";
+
+        SQLiteDatabase db=this.getReadableDatabase();
+
+        Cursor cursor = null;
+        if(db!=null) cursor = db.rawQuery(query, null);
+        return cursor;
+
     }
 
 

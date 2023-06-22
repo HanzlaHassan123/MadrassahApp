@@ -1,38 +1,136 @@
 package com.example.mudrassahapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.example.mudrassahapp.AddStudent;
+import com.example.mudrassahapp.AddTasks;
+import com.example.mudrassahapp.DBHandler;
+import com.example.mudrassahapp.Model;
+import com.example.mudrassahapp.MyAdapterClass;
+import com.example.mudrassahapp.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    RecyclerView recyclerView;
+    EditText editText;
+    Button searchBtn, addBtn, addTaskButton;
+    List<Model> filteredStudentList;
+
+    DBHandler dbHandler;
+    private Context context;
+
+    private ArrayList<Model> dataholder;
+
+
+    private MyAdapterClass adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button btn=findViewById(R.id.button);
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        context = MainActivity.this;
+
+        recyclerView = findViewById(R.id.recycleview);
+        editText = findViewById(R.id.search);
+        searchBtn = findViewById(R.id.button);
+        addBtn = findViewById(R.id.addstd);
+        addTaskButton = findViewById(R.id.addTask);
+
+        //String query=editText.getText().toString();
+
+        searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(MainActivity.this,StudentDetails.class);
-                startActivity(intent);
+                String query = editText.getText().toString();
+                filterStudentList(query, dataholder);
             }
         });
 
 
+        addTaskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AddTasks.class);
+                startActivity(intent);
+            }
+        });
+
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AddStudent.class);
+                startActivity(intent);
+            }
+        });
+
+        dbHandler = new DBHandler(MainActivity.this);
+
+        dataholder = new ArrayList<Model>();
+        adapter = new MyAdapterClass(context, dataholder);
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
+
+
+        loadData();
     }
 
-    public void ClickDailyTask(View v){
-        Intent intent=new Intent(MainActivity.this, DailyTask.class);
-        startActivity(intent);
+    private void loadData() {
+        Cursor cursor = dbHandler.readAllData();
+        if (cursor.getCount() == 0) {
+            Toast.makeText(this, "No Data yet", Toast.LENGTH_SHORT).show();
+        } else {
+            while (cursor.moveToNext()) {
+                @SuppressLint("Range") String rollNum = cursor.getString(cursor.getColumnIndex("std_roll"));
+                @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex("std_name"));
+                @SuppressLint("Range") String age = cursor.getString(cursor.getColumnIndex("std_age"));
+                @SuppressLint("Range") String stdClass = cursor.getString(cursor.getColumnIndex("std_class"));
+
+                Model model = new Model(rollNum, name, age, stdClass);
+                dataholder.add(model);
+            }
+            adapter.notifyDataSetChanged();
+        }
+        cursor.close();
     }
 
-    public void ClickSearch(View v){
-        Intent intent=new Intent(MainActivity.this, Search.class);
-        startActivity(intent);
+    private void filterStudentList(String query, List<Model> studentList) {
+        filteredStudentList = new ArrayList<>();
+
+        if (query.isEmpty()) {
+            filteredStudentList = (List<Model>) dbHandler.readAllData();
+        } else {
+            query = query.toLowerCase();
+            for (Model student : studentList) {
+                if (student.getName().toLowerCase().contains(query)) {
+                    filteredStudentList.add(student);
+                }
+            }
+            LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setHasFixedSize(true);
+            adapter = new MyAdapterClass((Context) MainActivity.this, (ArrayList<Model>) filteredStudentList);
+            recyclerView.setAdapter(adapter);
+        }
+        adapter.notifyDataSetChanged();
     }
+
+
 }
