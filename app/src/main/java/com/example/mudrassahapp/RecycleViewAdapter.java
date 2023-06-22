@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
    }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Implement the creation of your ViewHolder instance here
         // using the provided parent view and viewType
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
@@ -36,7 +37,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         // Implement binding data to your ViewHolder instance here
         holder.roll_no_txt.setText(String.valueOf(RollNo.get(position)));
         holder.name_txt.setText(String.valueOf(Name.get(position)));
@@ -49,16 +50,13 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
 
     @Override
     public int getItemCount() {
-        // Implement the logic to return the item count
         return RollNo.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView roll_no_txt,name_txt,age_txt,Class_txt,sabaq_txt,sabaqi_txt,manzil_txt;
-        public MyViewHolder(View itemView) {
+        public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Initialize your ViewHolder's views and components here
-
             roll_no_txt = itemView.findViewById(R.id.roll_no_txt);
             name_txt = itemView.findViewById(R.id.name_txt);
             age_txt = itemView.findViewById(R.id.age_txt);
